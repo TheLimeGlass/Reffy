@@ -1,9 +1,6 @@
 package me.limeglass.reffy.elements;
 
 import java.io.StreamCorruptedException;
-import java.util.Optional;
-import java.util.regex.Pattern;
-
 import org.eclipse.jdt.annotation.Nullable;
 
 import ch.njol.skript.classes.ClassInfo;
@@ -21,19 +18,17 @@ public class Registration {
 	static {
 		Classes.registerClass(new ClassInfo<>(Reference.class, "reference")
 				.user("references?")
-				.name("Location")
+				.name("Reference")
 				.defaultExpression(new EventValueExpression<>(Reference.class))
 				.parser(new Parser<Reference>() {
-					
 					@Override
 					@Nullable
 					public Reference parse(String input, ParseContext context) {
-						Optional<Reference> optional = ReferenceManager.get(input);
-						if (optional.isPresent())
-							return optional.get();
-						Reference reference = new Reference(input);
-						ReferenceManager.add(reference);
-						return reference;
+						return ReferenceManager.get(input).orElseGet(() -> {
+							Reference reference = new Reference(input);
+							ReferenceManager.add(reference);
+							return reference;
+						});
 					}
 					
 					@Override
@@ -73,23 +68,17 @@ public class Registration {
 					@Override
 					public void deserialize(Reference o, Fields f) throws StreamCorruptedException {
 						assert false;
-}
+					}
 					
 					@Override
 					public Reference deserialize(Fields fields) throws StreamCorruptedException {
 						String name = fields.getAndRemovePrimitive("name", String.class);
-						if (name == null)
-							return new Reference();
-						Optional<Reference> optional = ReferenceManager.get(name);
-						Reference temp = new Reference();
-						if (optional.isPresent())
-							temp = optional.get();
-						final Reference reference = temp;
+						Reference reference = ReferenceManager.get(name).orElse(new Reference());
 						if (fields.getAndRemovePrimitive("references", boolean.class)) {
 							fields.forEach(field -> {
 								String ID = field.getID();
 								if (ID.startsWith("name:")) {
-									ID = ID.replaceFirst(Pattern.quote("name:"), "");
+									ID = ID.replaceFirst("name:", "");
 									try {
 										reference.add(ID, field.getObject());
 									} catch (StreamCorruptedException e) {

@@ -55,8 +55,8 @@ public class ExprReference extends SimpleExpression<Object> {
 		String name = this.name.getSingle(event).getName();
 		for (Reference reference : references.getAll(event)) {
 			Optional<Object> optional = reference.getReference(name);
-			if (!optional.isPresent())
-				objects.add(reference.getReference(name));
+			if (optional.isPresent())
+				objects.add(optional.get());
 		}
 		return objects.toArray(new Object[objects.size()]);
 	}
