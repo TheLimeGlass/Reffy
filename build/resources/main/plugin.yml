@@ -1,0 +1,6 @@
+name: Reffy
+author: LimeGlass
+description: Reference objects and custom values for Skript.
+version: 1.0.0
+main: me.limeglass.reffy.Reffy
+depend: [Skript]
