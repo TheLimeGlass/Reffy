@@ -17,7 +17,7 @@ public class Reference {
 	}
 	
 	public Optional<Object> getReference(String name) {
-		return Optional.of(references.get(name));
+		return Optional.ofNullable(references.get(name));
 	}
 	
 	public void add(String name, Object object) {
